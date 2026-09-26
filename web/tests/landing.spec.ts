@@ -108,7 +108,7 @@ test.describe("Landing controls all navigate or scroll", () => {
     await expect(page.getByText(/Spread between issuers: 0/)).toBeVisible();
     await page.getByRole("button", { name: "Separate pools" }).click();
     await expect(page.getByText(/Peak spread between issuers/)).toBeVisible();
-    await expect(page.locator("#one-price").getByText("Illustrative", { exact: true })).toBeVisible();
+    await expect(page.locator("#one-price").getByText("Illustrative", { exact: true })).toHaveCount(0);
     // The xStocks line and its legend key are pink.
     const pink = "rgb(255, 126, 185)";
     await expect(page.locator(".op-line.op-x")).toHaveCSS("stroke", pink);
