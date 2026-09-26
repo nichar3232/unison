@@ -41,7 +41,8 @@ test("Landing: Unison brand, four slides (hero, one price, flow, under the hood)
  * inside a slide (a How it works card) snaps to its slide: that slide is at the top and the target is fully in view.
  */
 async function expectScrolledTo(page: Page, id: string) {
-  await expect(page).toHaveURL(new RegExp(`#${id}$`));
+  // In-page links keep the hash; a load with a hash jumps there and then drops it (so reloads start at the top).
+  await expect(page).toHaveURL(new RegExp(`/(#${id})?$`));
   await expect
     .poll(() =>
       page.evaluate((id) => {
@@ -96,7 +97,7 @@ test.describe("Landing controls all navigate or scroll", () => {
       await expect(page).toHaveURL(/\/$/);
     }
     await page.goto("/developers"); // retired: old links land on the technical slide
-    await expect(page).toHaveURL(/\/#tech$/);
+    await expect(page).toHaveURL(/\/(#tech)?$/);
     await expectScrolledTo(page, "tech");
     // "One price" chart: toggling collapses both pool lines onto NAV.
     await page.goto("/");
@@ -262,4 +263,22 @@ test.describe("Landing controls all navigate or scroll", () => {
     await expect(page.locator("#verify")).toHaveCount(0);
   });
 
+
+  test("every load starts at the hero: a reload after scrolling, and a reload of a #link", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto("/");
+    await expect(page.locator(".hero h1")).toHaveText("Unison");
+    await page.locator(".hero h1").click();
+    await page.keyboard.press("PageDown");
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0);
+    await page.reload();
+    await expect(page.locator(".hero h1")).toHaveText("Unison");
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    await page.goto("about:blank"); // a real load, not a same-page hash change
+    await page.goto("/#tech");
+    await expectScrolledTo(page, "tech");
+    await expect(page).toHaveURL(/\/$/); // the hash is dropped after the jump
+    await page.reload();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  });
 });

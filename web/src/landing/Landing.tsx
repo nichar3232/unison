@@ -11,12 +11,21 @@ import "./landing.css";
 
 // The landing page is a slide deck: every top-level section snaps (landing.css, html.deck). Developers is not.
 document.documentElement.classList.add("deck");
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function Landing() {
   const hero = useRef<HTMLElement>(null);
-  // The page renders after the browser's own jump to /#how-it-works or /#tech, so jump once the target exists.
+  // Every load starts at the hero: no restored scroll position. A #link (e.g. /#tech from /developers) still jumps to
+  // its slide once it exists, then the hash is dropped so the next reload starts at the top again.
+  const landed = useRef(false);
   useEffect(() => {
-    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+    if (landed.current) return; // once per page load (StrictMode runs effects twice in dev)
+    landed.current = true;
+    const target = location.hash ? document.getElementById(location.hash.slice(1)) : null;
+    if (target) {
+      target.scrollIntoView();
+      history.replaceState(null, "", location.pathname + location.search);
+    } else scrollTo(0, 0);
   }, []);
   return (
     <>
