@@ -131,7 +131,8 @@ test.describe("Landing controls all navigate or scroll", () => {
     ];
     await expect(flow.locator(".cf-title")).toHaveText(nodes.map((n) => n[0]));
     await expect(flow.locator(".cf-sub")).toHaveText(nodes.map((n) => n[1]));
-    await expect(flow.locator(".cf-caption")).toHaveText("Exchange A price · Exchange B price feed only this");
+    await expect(flow.locator(".cf-caption")).toHaveCount(0);
+    await expect(flow).not.toContainText("Exchange A price");
     await expect(flow.locator("figcaption")).toHaveText("Exchange prices never enter the conversion. Only the multipliers do.");
     const rects = flow.locator(".cf-node rect");
     expect(await rects.evaluateAll((r) => r.map((x) => x.getAttribute("height")))).toEqual(["56", "56", "56", "56", "56"]);

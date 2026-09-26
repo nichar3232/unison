@@ -80,8 +80,8 @@ export function ConvertFlow() {
   const W = 720;
   const top = 0;
   const e = example;
-  const oracle: Box = { x: 265, y: top + 24, w: 190, title: "Oracle · peg guard", sub: "Stops trade if gap > 50 bps" };
-  const row2 = top + 124;
+  const oracle: Box = { x: 265, y: top, w: 190, title: "Oracle · peg guard", sub: "Stops trade if gap > 50 bps" };
+  const row2 = top + 100;
   const sends: Box = { x: 0, y: row2, w: 170, title: "User sends", sub: e ? `${e.in} ${e.from} = ${e.shares} sh` : "Issuer A's wrapper" };
   const hook: Box = { x: 265, y: row2, w: 190, title: "ParityHook, in the v4 pool", sub: e ? `Share for share, minus ${e.feeBps} bps` : "Share for share, minus fee" };
   const receives: Box = { x: 550, y: row2, w: 170, title: "User receives", sub: e ? `${e.out} ${e.to} = ${e.out} sh` : "Issuer B's wrapper" };
@@ -98,9 +98,6 @@ export function ConvertFlow() {
             <path d="M0 0 L10 5 L0 10 z" className="cf-arrowhead" />
           </marker>
         </defs>
-        <text x={W / 2} y={top + 13} textAnchor="middle" className="cf-caption">
-          Exchange A price · Exchange B price feed only this
-        </text>
         <Node b={oracle} />
         <Arrow d={`M${W / 2} ${oracle.y + H} L${W / 2} ${row2 - 1}`} begin={0} label={e ? `multipliers ${e.multIn} · ${e.multOut}` : "multipliers · peg check"} at={{ x: W / 2 + 10, y: (oracle.y + H + row2) / 2 + 4, anchor: "start" }} />
         <Node b={sends} />
