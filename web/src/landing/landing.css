@@ -1267,3 +1267,10 @@ html.deck .flow-sec .convert-flow {
 .tech-ctas .ghost:hover {
   border-color: var(--black-ink);
 }
+/* Flow diagram: what moves along each arrow */
+.cf-edge {
+  fill: currentColor;
+  opacity: 0.78;
+  font-size: 11.5px;
+  font-weight: 500;
+}

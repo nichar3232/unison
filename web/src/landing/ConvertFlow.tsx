@@ -21,11 +21,16 @@ function Node({ b }: { b: Box }) {
   );
 }
 /** An arrow with two dots riding it, offset by half a cycle; `begin` staggers the arrows along the flow. */
-function Arrow({ d, begin = 0 }: { d: string; begin?: number }) {
+function Arrow({ d, begin = 0, label, at }: { d: string; begin?: number; label?: string; at?: { x: number; y: number; anchor?: "start" | "middle" } }) {
   const dur = 2.4;
   return (
     <>
       <path className="cf-arrow" d={d} markerEnd="url(#cf-head)" />
+      {label && at && (
+        <text x={at.x} y={at.y} textAnchor={at.anchor ?? "middle"} className="cf-edge">
+          {label}
+        </text>
+      )}
       {[0, dur / 2].map((offset) => (
         <circle key={offset} className="cf-dot" r={3.5}>
           <animateMotion dur={`${dur}s`} begin={`${begin + offset}s`} repeatCount="indefinite" path={d} />
@@ -38,12 +43,12 @@ function Arrow({ d, begin = 0 }: { d: string; begin?: number }) {
 export function ConvertFlow() {
   const W = 720;
   const top = 0;
-  const oracle: Box = { x: 245, y: top + 24, w: 230, title: "Oracle · peg guard", sub: "Stops trade if gap > 50 bps" };
+  const oracle: Box = { x: 265, y: top + 24, w: 190, title: "Oracle · peg guard", sub: "Stops trade if gap > 50 bps" };
   const row2 = top + 124;
-  const sends: Box = { x: 0, y: row2, w: 200, title: "User sends", sub: "100 mcbAAPL, issuer A" };
-  const hook: Box = { x: 245, y: row2, w: 230, title: "ParityHook, in the v4 pool", sub: "Share for share, minus fee" };
-  const receives: Box = { x: 520, y: row2, w: 200, title: "User receives", sub: "101.08 mAAPLx, issuer B" };
-  const lp: Box = { x: 245, y: row2 + 100, w: 230, title: "LP inventory", sub: "Takes the other side, earns fee" };
+  const sends: Box = { x: 0, y: row2, w: 170, title: "User sends", sub: "100 mcbAAPL, issuer A" };
+  const hook: Box = { x: 265, y: row2, w: 190, title: "ParityHook, in the v4 pool", sub: "Share for share, minus fee" };
+  const receives: Box = { x: 550, y: row2, w: 170, title: "User receives", sub: "101.08 mAAPLx, issuer B" };
+  const lp: Box = { x: 265, y: row2 + 100, w: 190, title: "LP inventory", sub: "Takes the other side, earns fee" };
   const height = lp.y + H + 2;
   const label = [
     "Oracle and peg guard stop the trade if the gap exceeds 50 bps.",
@@ -63,13 +68,13 @@ export function ConvertFlow() {
           Exchange A price · Exchange B price feed only this
         </text>
         <Node b={oracle} />
-        <Arrow d={`M${W / 2} ${oracle.y + H} L${W / 2} ${row2 - 1}`} begin={0} />
+        <Arrow d={`M${W / 2} ${oracle.y + H} L${W / 2} ${row2 - 1}`} begin={0} label="multipliers · peg check" at={{ x: W / 2 + 10, y: (oracle.y + H + row2) / 2 + 4, anchor: "start" }} />
         <Node b={sends} />
-        <Arrow d={`M${sends.x + sends.w} ${row2 + H / 2} L${hook.x - 1} ${row2 + H / 2}`} begin={0.3} />
+        <Arrow d={`M${sends.x + sends.w} ${row2 + H / 2} L${hook.x - 1} ${row2 + H / 2}`} begin={0.3} label="100 mcbAAPL" at={{ x: (sends.x + sends.w + hook.x) / 2, y: row2 + H / 2 - 8 }} />
         <Node b={hook} />
-        <Arrow d={`M${hook.x + hook.w} ${row2 + H / 2} L${receives.x - 1} ${row2 + H / 2}`} begin={0.9} />
+        <Arrow d={`M${hook.x + hook.w} ${row2 + H / 2} L${receives.x - 1} ${row2 + H / 2}`} begin={0.9} label="101.08 mAAPLx" at={{ x: (hook.x + hook.w + receives.x) / 2, y: row2 + H / 2 - 8 }} />
         <Node b={receives} />
-        <Arrow d={`M${W / 2} ${row2 + H} L${W / 2} ${lp.y - 1}`} begin={0.9} />
+        <Arrow d={`M${W / 2} ${row2 + H} L${W / 2} ${lp.y - 1}`} begin={0.9} label="fee · other side" at={{ x: W / 2 + 10, y: (row2 + H + lp.y) / 2 + 4, anchor: "start" }} />
         <Node b={lp} />
       </svg>
       <figcaption>Exchange prices never enter the conversion. Only the multipliers do.</figcaption>
