@@ -1,6 +1,6 @@
 import { StrictMode, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import { ConvertFlow, example } from "./ConvertFlow";
+import { ConvertFlow } from "./ConvertFlow";
 import { Grain, Nav } from "./chrome";
 import { Halftone } from "./Halftone";
 import { mcpDemo } from "./mcp";
@@ -58,12 +58,7 @@ function Landing() {
       <OnePrice />
 
       <section className="black flow-sec" id="how-it-works" aria-labelledby="flow-h">
-        <h2 id="flow-h">How a conversion works</h2>
-        <p className="flow-sub">
-          {example
-            ? `A worked example at the deployed multipliers: ${example.in} ${example.from} (Coinbase's AAPL) in, ${example.to} (xStocks' AAPL) out, for the ${example.feeBps} bps base fee.`
-            : "One issuer's wrapper in, the other issuer's out, share for share, for the base fee."}
-        </p>
+        <h2 id="flow-h">How it works</h2>
         <ConvertFlow />
       </section>
 

@@ -318,9 +318,8 @@ function App() {
       {/* Header + panels fill exactly one screen; the Verify footer sits below it. */}
       <div className="app-screen">
       <header className="nav">
-        <a className="wordmark" href="/">
+        <a className="wordmark" href="/" aria-label="Unison home">
           <Mark />
-          unison
         </a>
         <nav aria-label="Main navigation" ref={navRef}>
           {TABS.map((t) => (

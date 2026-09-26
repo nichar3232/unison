@@ -17,12 +17,14 @@ test("Landing: Unison brand, four slides (hero, one price, flow, under the hood)
   await expect(page.locator("body > #root > section")).toHaveCount(4);
   // Header: no section links, no dropdowns, no mobile menu.
   const header = page.locator("header.lnav");
-  await expect(header.getByRole("link")).toHaveText(["", "unison", "Launch app"]);
+  await expect(header.getByRole("link")).toHaveText(["", "Launch app"]); // logo only, no "unison" wordmark
+  await expect(header).not.toContainText("unison");
   await expect(header.getByRole("link", { name: /Product|How it works|Developers/ })).toHaveCount(0);
   await expect(header.getByRole("button", { name: /menu/i })).toHaveCount(0);
-  // How it works: a title, one line, and the flow diagram; no product cards.
+  // How it works: a title and the flow diagram; no product cards.
   const how = page.locator("#how-it-works");
-  await expect(how.getByRole("heading", { level: 2 })).toHaveText("How a conversion works");
+  await expect(how.getByRole("heading", { level: 2 })).toHaveText("How it works");
+  await expect(how.locator(".flow-sub")).toHaveCount(0);
   await expect(how.locator(".steps4")).toHaveCount(0);
   await expect(how.locator(".convert-flow")).toHaveCount(1);
   // No Verify footer, no Developers page remnants.
@@ -92,7 +94,7 @@ test.describe("Landing controls all navigate or scroll", () => {
     await page.goto("/");
     await page.getByRole("link", { name: "See it onchain →" }).click();
     await expectScrolledTo(page, "tech");
-    for (const name of ["Unison home", "unison"]) {
+    for (const name of ["Unison home"]) {
       await page.goto("/#tech");
       await page.getByRole("link", { name, exact: true }).first().click();
       await expect(page).toHaveURL(/\/$/);

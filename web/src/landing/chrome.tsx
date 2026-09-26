@@ -13,15 +13,12 @@ export function Grain() {
   );
 }
 
-/** Landing header: logo, wordmark, theme toggle and the way into the app. */
+/** Landing header: logo, theme toggle and the way into the app. */
 export function Nav() {
   return (
     <header className="lnav">
       <a className="logo-cell" href="/" aria-label="Unison home">
         <Mark size={24} />
-      </a>
-      <a className="wordmark" href="/">
-        unison
       </a>
       <div className="lnav-end">
         <ThemeToggle />
