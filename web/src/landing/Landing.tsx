@@ -1,11 +1,11 @@
 import { StrictMode, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import { ConvertFlow } from "./ConvertFlow";
+import { ConvertFlow, example } from "./ConvertFlow";
 import { Grain, Nav } from "./chrome";
 import { Halftone } from "./Halftone";
 import { mcpDemo } from "./mcp";
 import { OnePrice } from "./OnePrice";
-import { GITHUB, MCP_URL, verifyLinks } from "../verify";
+import { MCP_URL } from "../verify";
 import "../theme.css";
 import "./landing.css";
 
@@ -57,7 +57,13 @@ function Landing() {
 
       <OnePrice />
 
-      <section className="black flow-sec" id="how-it-works" aria-label="How a conversion flows">
+      <section className="black flow-sec" id="how-it-works" aria-labelledby="flow-h">
+        <h2 id="flow-h">How a conversion works</h2>
+        <p className="flow-sub">
+          {example
+            ? `A worked example at the deployed multipliers: ${example.in} ${example.from} (Coinbase's AAPL) in, ${example.to} (xStocks' AAPL) out, for the ${example.feeBps} bps base fee.`
+            : "One issuer's wrapper in, the other issuer's out, share for share, for the base fee."}
+        </p>
         <ConvertFlow />
       </section>
 
@@ -68,7 +74,6 @@ function Landing() {
 
 /** The last slide: the technical essentials in a few lines, and the way into the app. */
 function Tech() {
-  const parity = verifyLinks().find((l) => l.name === "ParityHook");
   return (
     <section className="black tech" id="tech" aria-labelledby="tech-h">
       <h2 id="tech-h">Under the hood</h2>
@@ -106,14 +111,6 @@ function Tech() {
       <div className="tech-ctas">
         <a className="launch" href="/app">
           Launch app
-        </a>
-        {parity && (
-          <a className="ghost" href={parity.url} target="_blank" rel="noreferrer">
-            ParityHook on Uniscan ↗
-          </a>
-        )}
-        <a className="ghost" href={GITHUB} target="_blank" rel="noreferrer">
-          GitHub ↗
         </a>
       </div>
     </section>

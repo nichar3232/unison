@@ -20,9 +20,10 @@ test("Landing: Unison brand, four slides (hero, one price, flow, under the hood)
   await expect(header.getByRole("link")).toHaveText(["", "unison", "Launch app"]);
   await expect(header.getByRole("link", { name: /Product|How it works|Developers/ })).toHaveCount(0);
   await expect(header.getByRole("button", { name: /menu/i })).toHaveCount(0);
-  // How it works is the flow diagram alone: no heading, no product cards.
+  // How it works: a title, one line, and the flow diagram; no product cards.
   const how = page.locator("#how-it-works");
-  await expect(how.locator("h2, .steps4")).toHaveCount(0);
+  await expect(how.getByRole("heading", { level: 2 })).toHaveText("How a conversion works");
+  await expect(how.locator(".steps4")).toHaveCount(0);
   await expect(how.locator(".convert-flow")).toHaveCount(1);
   // No Verify footer, no Developers page remnants.
   await expect(page.locator("#verify, footer, #proof, #developers, #architecture, #agents")).toHaveCount(0);
@@ -117,11 +118,13 @@ test.describe("Landing controls all navigate or scroll", () => {
   test("flow diagram: five nodes in one colour, dots moving along every arrow", async ({ page }) => {
     await page.goto("/");
     const flow = page.locator("#how-it-works .convert-flow");
+    // The worked example comes from the manifest: 100 mcbAAPL at multiplier 1.0125 = 101.25 sh; 2 bps base fee
+    // (0.02025 sh, rounded up by the hook) leaves 101.22975 mAAPLx at multiplier 1.0000.
     const nodes = [
       ["Oracle · peg guard", "Stops trade if gap > 50 bps"],
-      ["User sends", "100 mcbAAPL, issuer A"],
-      ["ParityHook, in the v4 pool", "Share for share, minus fee"],
-      ["User receives", "101.08 mAAPLx, issuer B"],
+      ["User sends", "100 mcbAAPL = 101.25 sh"],
+      ["ParityHook, in the v4 pool", "Share for share, minus 2.00 bps"],
+      ["User receives", "101.23 mAAPLx = 101.23 sh"],
       ["LP inventory", "Takes the other side, earns fee"],
     ];
     await expect(flow.locator(".cf-title")).toHaveText(nodes.map((n) => n[0]));
@@ -148,7 +151,8 @@ test.describe("Landing controls all navigate or scroll", () => {
         });
     const first = await at();
     await expect.poll(at, { timeout: 3000 }).not.toBe(first);
-    expect(await flow.evaluate((e) => e.getBoundingClientRect().width)).toBeLessThanOrEqual(720);
+    await expect(flow.locator(".cf-edge")).toHaveText(["multipliers 1.0125 · 1.0000", "100 mcbAAPL", "101.23 mAAPLx", "0.02 sh fee · other side"]);
+    expect(await flow.evaluate((e) => e.getBoundingClientRect().width)).toBeLessThanOrEqual(960);
     expect(await flow.locator("svg").innerHTML()).not.toMatch(/Gradient/);
     // Reduced motion hides the dots.
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -157,7 +161,7 @@ test.describe("Landing controls all navigate or scroll", () => {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 
-  test("last slide: the technical essentials, the recorded agent run, Launch app, ParityHook and GitHub links", async ({ page }) => {
+  test("last slide: the technical essentials, the recorded agent run, and Launch app only", async ({ page }) => {
     const d = read("unichain-sepolia.resolved.json");
     // From the generated file (scripts/gen-mcp-demo.py), not typed values.
     const demo = read("unichain-sepolia.mcp-demo.json");
@@ -168,9 +172,7 @@ test.describe("Landing controls all navigate or scroll", () => {
     await expect(t).toContainText("https://nichars-mac-mini.tail43cacc.ts.net/mcp");
     if (demo) await expect(t.getByRole("link", { name: /^0x[0-9a-f]{8}…[0-9a-f]{6} ↗$/ })).toHaveAttribute("href", `https://sepolia.uniscan.xyz/tx/${demo.tx}`);
     await expect(t.getByRole("link", { name: "Launch app", exact: true })).toHaveAttribute("href", "/app");
-    if (d)
-      await expectPopup(page, () => t.getByRole("link", { name: "ParityHook on Uniscan ↗" }).click(), new RegExp(`uniscan\\.xyz/address/${d.contracts.parityHook}`, "i"));
-    await expectPopup(page, () => t.getByRole("link", { name: "GitHub ↗" }).click(), /github\.com\/nichar3232\/wrapswap/);
+    await expect(t.getByRole("link", { name: /ParityHook on Uniscan|GitHub/ })).toHaveCount(0); // only Launch app
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
