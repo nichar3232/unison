@@ -23,7 +23,7 @@ test("Landing: Unison brand, four slides (hero, one price, flow, under the hood)
   await expect(header.getByRole("button", { name: /menu/i })).toHaveCount(0);
   // How it works: a title and the flow diagram; no product cards.
   const how = page.locator("#how-it-works");
-  await expect(how.getByRole("heading", { level: 2 })).toHaveText("How it works");
+  await expect(how.getByRole("heading", { level: 2 })).toHaveText("One share in. One share out.");
   await expect(how.locator(".flow-sub")).toHaveCount(0);
   await expect(how.locator(".steps4")).toHaveCount(0);
   await expect(how.locator(".convert-flow")).toHaveCount(1);

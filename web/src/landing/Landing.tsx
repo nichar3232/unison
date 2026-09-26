@@ -58,7 +58,7 @@ function Landing() {
       <OnePrice />
 
       <section className="black flow-sec" id="how-it-works" aria-labelledby="flow-h">
-        <h2 id="flow-h">How it works</h2>
+        <h2 id="flow-h">One share in. One share out.</h2>
         <ConvertFlow />
       </section>
 
